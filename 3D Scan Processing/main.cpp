@@ -33,6 +33,7 @@ int main(int argc, char* argv[]) {
 	for (int i = 0; i < layers.size(); i++) {
 		if (layers.at(i).numPoints() > 50) {
 			cout << "Number of points at layer y: " << layers.at(i).getY() << " is " << layers.at(i).numPoints() << endl;
+			cout << "Convex Hull Analysis: " << layers.at(i).convexHull() << endl;
 			ofstream output;
 			output.open("point_cloud_layer.txt");
 			vector<double> x = layers.at(i).getX();
@@ -42,7 +43,7 @@ int main(int argc, char* argv[]) {
 			}
 			output.close();
 			plot1("plot [-1:1] [-1:1] \"point_cloud_layer.txt\" with points");
-			chrono::milliseconds ms(50);
+			chrono::milliseconds ms(250);
 			this_thread::sleep_for(ms);
 		}
 	}

@@ -1,4 +1,5 @@
 #pragma once
+#include <algorithm>
 #include <chrono>
 #include <fstream>
 #include <iostream>
@@ -15,6 +16,9 @@ using namespace std;
 
 class Layer {
 public:
+	struct Point {
+		double xp, yp;
+	};
 	Layer(vector<double> x, double y, vector<double> z);
 	double convexHull();
 	vector<double> getX();
@@ -25,14 +29,13 @@ public:
 	double zDiff();
 
 private:
-	struct Point {
-		double xp, yp;
-	};
+	Point p0;
 	vector<double> x;
 	vector<double> z;
 	double y;
 	int compare(const void *vp1, const void *vp2);
 	double distanceCalc(Point p1, Point p2);
+	double distanceCalc(stack<Point> &S);
 	Point nextToTop(stack<Point> &S);
 	int orientation(Point p, Point q, Point r);
 	void swap(Point &p1, Point &p2);
