@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
 		if (layers.at(i).numPoints() > 50) {
 			cout << "Number of points at layer y: " << layers.at(i).getY() << " is " << layers.at(i).numPoints() << endl;
 			cout << "Convex Hull Analysis: " << layers.at(i).convexHull() << endl;
-			cout << "Max x diff: " << layers.at(i).maxZDiff() << endl;
+			layers.at(i).calculateDiff();
 			ofstream output;
 			output.open("point_cloud_layer.txt");
 			vector<double> x = layers.at(i).getX();
@@ -45,7 +45,7 @@ int main(int argc, char* argv[]) {
 			}
 			output.close();
 			plot1("plot [-1:1] [-1:1] \"point_cloud_layer.txt\" with points");
-			chrono::milliseconds ms(1000);
+			chrono::milliseconds ms(500);
 			this_thread::sleep_for(ms);
 			//system("pause");
 		}

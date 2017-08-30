@@ -109,7 +109,6 @@ double Layer::calculateDiff() {
 	}
 	sort(zs.begin(), zs.end());
 
-	cout << "Finished sort..." << endl;
 	for (int i = 0; i < zs.size() - 1; i++) {
 		diff = zs.at(i + 1) - zs.at(i);
 		if (diff > max2) {
@@ -123,7 +122,8 @@ double Layer::calculateDiff() {
 			}
 		}
 	}
-
+	cout << "Max1: " << max1 << endl;
+	cout << "Max2: " << max2 << endl;
 	return max1;
 }
 

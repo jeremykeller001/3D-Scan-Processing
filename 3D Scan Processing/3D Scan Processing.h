@@ -32,10 +32,15 @@ private:
 	};
 	vector<double> x;
 	vector<double> z;
-	vector<double> leftX;
-	vector<double> leftZ;
-	vector<double> rightX;
-	vector<double> RightZ;
+	vector<double> leftArmX;
+	vector<double> leftArmZ;
+	vector<double> rightArmX;
+	vector<double> rightArmZ;
+	vector<double> leftLegX;
+	vector<double> leftLegZ;
+	vector<double> rightLegX;
+	vector<double> rightLegZ;
+	
 	int lowerBoundMax1;
 	int lowerBoundMax2;
 	double y;
