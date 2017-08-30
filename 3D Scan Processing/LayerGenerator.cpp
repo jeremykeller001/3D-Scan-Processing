@@ -9,7 +9,7 @@ void LayerGenerator::readObj(string name, vector<double> *in1, vector<double> *i
 	// Check to see if file opened
 	if (!objFile) {
 		cerr << "Unable to open file";
-		return;
+		exit(1);
 	}
 
 	string input;

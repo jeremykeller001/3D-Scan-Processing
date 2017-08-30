@@ -37,16 +37,14 @@ double Layer::convexHull() {
 	// a A point p1 comes before p2 in sorted output if
 	//	p2 has larger polar angle (in ccw direction) than p1
 	p0 = points.at(0);
-	qsort(&points.at(1), n - 1, sizeof(Point), compare);
-	//sort(points.begin() + 1, points.end(), &Layer::compare);
-	
+	points = insertionSort(points);
 
 	// If two or more points make the same angle with p0,
 	// Remove all but the one that is farthest from p0.
 	int m = 1;
 	for (int i = 1; i < n; i++) {
 		// Keep removing i while angle of i and i+1 is same with respect to p0
-		while (i < n - 1 && orientation(p0, points[i], points[i + 1]) == 0) {
+		while (i < n - 1 && orientation(p0, points.at(i), points.at(i + 1)) == 0) {
 			i++;
 		}
 
@@ -55,7 +53,7 @@ double Layer::convexHull() {
 	}
 
 	// If modified array of points has less than 3 points, convex hull is not possible
-	if(m < 3) return 0;
+	if(m < 3) return -1;
 
 	// Create an empty stack and push first three points to it
 	stack<Point> S;
@@ -109,19 +107,17 @@ double Layer::zDiff() {
 	return max - min;
 }
 
-int Layer::compare(const void *vp1, const void *vp2) {
-	Point *p1 = (Point *)vp1;
-	Point *p2 = (Point *)vp2;
+bool Layer::compare(Point p1, Point p2) {
 
 	// Find orientation
-	int o = orientation(p0, *p1, *p2);
+	int o = orientation(p0, p1, p2);
 	if (o == 0) {
-		return (distanceCalc(p0, *p2) >= distanceCalc(p0, *p1)) ? -1 : 1;
-		//return (distanceCalc(p0, *p2) >= distanceCalc(p0, *p1));
+		//return (distanceCalc(p0, p2) >= distanceCalc(p0, p1)) ? -1 : 1;
+		return (distanceCalc(p0, p2) >= distanceCalc(p0, p1));
 	}
 
-	return(o == 2) ? -1 : 1;
-	//return(o == 2);
+	//return(o == 2) ? -1 : 1;
+	return(o == 2);
 }
 
 double Layer::distanceCalc(Point p1, Point p2) {
@@ -156,6 +152,25 @@ int Layer::orientation(Point p, Point q, Point r) {
 
 	if (val == 0) return 0; // colinear
 	return (val > 0) ? 1 : 2; // clock or counterclock wise
+}
+
+vector<Layer::Point> Layer::insertionSort(vector<Point> p) {
+	vector<Point> newP;
+	newP.push_back(p.at(0));
+	newP.push_back(p.at(1));
+	for (int i = 2; i < p.size(); i++) {
+		bool insert = false;
+		for (int j = 1; j < newP.size(); j++) {
+			if (compare(p.at(i), newP.at(j))) {
+				newP.insert(newP.begin() + j, p.at(i));
+				insert = true;
+				break;
+			}
+		}
+		if (!insert) newP.push_back(p.at(i));
+	}
+
+	return newP;
 }
 
 void Layer::swap(Point &p1, Point &p2) {

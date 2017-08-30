@@ -1,20 +1,18 @@
 #pragma once
-#include <algorithm>
 #include <chrono>
 #include <fstream>
 #include <iostream>
 #include <stack>
-#include <stdlib.h>
 #include <string>
 #include <thread>
 #include <vector>
 using namespace std;
 
-
 #ifndef Layer_h
 #define Layer_h
 
 class Layer {
+
 public:
 	struct Point {
 		double xp, yp;
@@ -33,11 +31,12 @@ private:
 	vector<double> x;
 	vector<double> z;
 	double y;
-	int compare(const void *vp1, const void *vp2);
+	bool compare(Point p1, Point p2);
 	double distanceCalc(Point p1, Point p2);
 	double distanceCalc(stack<Point> &S);
 	Point nextToTop(stack<Point> &S);
 	int orientation(Point p, Point q, Point r);
+	vector<Point> insertionSort(vector<Point> p);
 	void swap(Point &p1, Point &p2);
 };
 
