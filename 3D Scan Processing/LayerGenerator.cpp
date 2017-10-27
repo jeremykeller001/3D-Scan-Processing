@@ -70,7 +70,8 @@ void LayerGenerator::calculateAxes(vector<double> *in1, vector<double> *in2, vec
 			// diff3 is z axis
 			// diff2 is x axis
 			//order = 213;
-			in2->swap(*in3);
+			in1->swap(*in2);
+			//in2->swap(*in3);
 		}
 	}
 	else if (diff2 > diff1 && diff2 > diff3) {
@@ -95,6 +96,7 @@ void LayerGenerator::calculateAxes(vector<double> *in1, vector<double> *in2, vec
 			// diff2 is x axis
 			in1->swap(*in2);
 			in2->swap(*in3);
+			in1->swap(*in3);
 		}
 		else {
 			// diff2 is z axis

@@ -1,12 +1,12 @@
 #include "3D Scan Processing.h"
-#include "GNU_plot.h"
+//#include "GNU_plot.h"
 
 int main(int argc, char* argv[]) {
 	// Read in point cloud
 	vector<double> in1;
 	vector<double> in2;
 	vector<double> in3;
-	LayerGenerator::readObj("model_mesh.obj", &in1, &in2, &in3);
+	LayerGenerator::readObj("model.obj", &in1, &in2, &in3);
 
 	// Calculate which axes are which
 	LayerGenerator::calculateAxes(&in1, &in2, &in3);
@@ -29,10 +29,10 @@ int main(int argc, char* argv[]) {
 	}
 	*/
 	
-	vector<Layer> layers = LayerGenerator::generateLayers(&in1, &in2, &in3, 500);
+	vector<Layer> layers = LayerGenerator::generateLayers(&in1, &in2, &in3, 40);
 	system("pause");
 	for (int i = 0; i < layers.size(); i++) {
-		if (layers.at(i).numPoints() > 50) {
+		if (layers.at(i).numPoints() > 5) {
 			cout << "Number of points at layer y: " << layers.at(i).getY() << " is " << layers.at(i).numPoints() << endl;
 			cout << "Convex Hull Analysis: " << layers.at(i).convexHull() << endl;
 			layers.at(i).calculateDiff();
@@ -47,7 +47,7 @@ int main(int argc, char* argv[]) {
 			plot1("plot [-1:1] [-1:1] \"point_cloud_layer.txt\" with points");
 			chrono::milliseconds ms(500);
 			this_thread::sleep_for(ms);
-			//system("pause");
+			system("pause");
 		}
 	}
 
