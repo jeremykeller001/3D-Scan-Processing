@@ -54,54 +54,52 @@ void LayerGenerator::calculateAxes(vector<double> *in1, vector<double> *in2, vec
 	cout << "Difference 3: " << diff3 << endl;
 
 	// normalize order
-	// assume z is left/right (shoulder to shoulder)
-	// x is front/back (Chest to back)
+	// assume x is left/right (shoulder to shoulder)
+	// z is front/back (Chest to back)
 	// y is up/down (height)
 	if (diff1 > diff2 && diff1 > diff3) {
 		// diff1 is y axis
 		if (diff2 > diff3) {
-			// diff2 is z axis
-			// diff3 is x axis
-			//order = 312;
-			in1->swap(*in3);
-			in2->swap(*in3);
-		}
-		else {
-			// diff3 is z axis
 			// diff2 is x axis
+			// diff3 is z axis
 			//order = 213;
 			in1->swap(*in2);
-			//in2->swap(*in3);
+		}
+		else {
+			// diff3 is x axis
+			// diff2 is z axis
+			//order = 312;
+			in1->swap(*in2);
+			in2->swap(*in3);
 		}
 	}
 	else if (diff2 > diff1 && diff2 > diff3) {
 		// diff2 is y axis
 		if (diff1 > diff3) {
-			//diff1 is z axis
-			//diff3 is x axis
-			//order = 321;
-			in1->swap(*in3);
+			//diff1 is x axis
+			//diff3 is z axis
+			//order = 123;
 		}
 		else {
-			//diff3 is z axis
-			//diff1 is x axis
-			//order = 123;
+			//diff3 is x axis
+			//diff1 is z axis
+			//order = 321;
+			in1->swap(*in3);
 		}
 	}
 	else {
 		// diff3 is y axis
 		if (diff1 > diff2) {
-			//order = 231;
-			// diff1 is z axis
-			// diff2 is x axis
-			in1->swap(*in2);
+			//order = 132;
+			// diff1 is x axis
+			// diff2 is z axis
 			in2->swap(*in3);
-			in1->swap(*in3);
 		}
 		else {
-			// diff2 is z axis
-			// diff1 is x axis
-			//order = 132;
+			// diff2 is x axis
+			// diff1 is z axis
+			//order = 231;
+			in1->swap(*in3);
 			in2->swap(*in3);
 		}
 	}
@@ -120,9 +118,9 @@ void LayerGenerator::calculateAxes(vector<double> *in1, vector<double> *in2, vec
 	for (int i = 0; i < (in2->size()); i++) {
 		output2 << in3->at(i) << " " << in2->at(i) << endl;
 	}
-	output2.close();
+output2.close();
 
-	cout << "Coordinates written, plotting..." << endl;
+cout << "Coordinates written, plotting..." << endl;
 }
 
 // adopted from http://www.geeksforgeeks.org/merge-sort/
@@ -216,4 +214,103 @@ vector<Layer> LayerGenerator::generateLayers(vector<double> *x, vector<double> *
 		layers.push_back(Layer(xx, value, zz));
 	}
 	return layers;
+}
+
+void LayerGenerator::generateImage(vector<double> *z, vector<double> *y) {
+	vector<int> data;
+	for (int i = 0; i < (RESOLUTION * RESOLUTION); i++) {
+		data.push_back(0);
+	}
+	for (int i = 0; i < z->size(); i++) {
+		vector<double> c;
+		c.push_back(z->at(i));
+		c.push_back(y->at(i));
+		int index = convertToPixel(c);
+		data.at(index) = 255;
+		//cout << index << endl;
+	}
+	SaveBitmap(&data);
+}
+
+int LayerGenerator::SaveBitmap(vector<int> *data) {
+	int  size;
+	BITMAPFILEHEADER bfh;
+	BITMAPINFOHEADER bih;
+
+	ofstream out;
+	out.open("model_image.bmp", ios::binary);
+	if (!out.is_open()) {
+		cerr << "Error: Could not open bitmap file for writing" << endl;
+		return -1;
+	}
+
+	size = RESOLUTION * RESOLUTION * 3;
+
+	// File Header
+	bfh.bfType = 0x4D42;
+	out.write((char*)&bfh.bfType, 2); // bfType 2
+	bfh.bfSize = size + 54;
+	out.write((char*)&bfh.bfSize, 4); // bfSize 4
+	bfh.bfReserved1 = 0;
+	out.write((char*)&bfh.bfReserved1, 2); // bfReserved1 2
+	bfh.bfReserved2 = 0;
+	out.write((char*)&bfh.bfReserved1, 2); // bfReserved2 2
+	bfh.bfOffBits = 14;
+	out.write((char*)&bfh.bfOffBits, 4); // bfOffBits 4
+
+	// Image Header
+	bih.biSize = 40;
+	out.write((char*)&bih.biSize, 4); // biSize 4
+	bih.biWidth = RESOLUTION;
+	out.write((char*)&bih.biWidth, 4); // biWidth 4
+	bih.biHeight = RESOLUTION;
+	out.write((char*)&bih.biHeight, 4); // biHeight 4
+	bih.biPlanes = 1;
+	out.write((char*)&bih.biPlanes, 2); // biPlanes 2
+	bih.biBitCount = 24;
+	out.write((char*)&bih.biBitCount, 2); // biBitCount 2
+	bih.biCompression = 0;
+	out.write((char*)&bih.biCompression, 4); // biCompression 4
+	bih.biSizeImage = 0;
+	out.write((char*)&bih.biSizeImage, 4); // biSizeImage 4
+	bih.biXPelsPerMeter = size;
+	out.write((char*)&bih.biXPelsPerMeter, 4); // biXPelsPerMeter 4
+	bih.biYPelsPerMeter = 0;
+	out.write((char*)&bih.biYPelsPerMeter, 4); // biYPelsPerMeter 4
+	bih.biClrUsed = 0;
+	out.write((char*)&bih.biClrUsed, 4); // biClrUsed 4
+	bih.biClrImportant = 0;
+	out.write((char*)&bih.biClrImportant, 4); // biClrImportant 4
+
+	if (data->size() != (RESOLUTION * RESOLUTION)) {
+		cerr << "Error: incorrect data size for bitmap output" << endl;
+		return -1;
+	}
+	
+	for (int i = 0; i < (RESOLUTION * RESOLUTION); i++) {
+		char a = 0;
+		if (data->at(i) == 255) {
+			out.write((char *)&a, 1);
+			out.write((char *)&a, 1);
+			out.write((char *)&data->at(i), 1);
+		}
+		else {
+			char b = 255;
+			out.write((char *)&b, 1);
+			out.write((char *)&b, 1);
+			out.write((char *)&b, 1);
+		}
+		
+	}
+
+	out.close();
+	return 0;
+}
+
+int LayerGenerator::convertToPixel(vector<double> coordinates) {
+	int mult = RESOLUTION / 2;
+	int z = coordinates.at(0) * mult + mult;
+	int y = coordinates.at(1) * mult + mult;
+	//cout << y * RESOLUTION + z << endl;
+	return y * RESOLUTION + z;
 }

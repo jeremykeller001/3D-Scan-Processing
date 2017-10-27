@@ -103,16 +103,17 @@ double Layer::calculateDiff() {
 	lowerBoundMax2 = 0;
 	double diff = -1;
 
-	vector<double> zs;
-	for (int i = 0; i < z.size(); i++) {
-		zs.push_back(z.at(i));
+	vector<double> xs;
+	for (int i = 0; i < x.size(); i++) {
+		xs.push_back(x.at(i));
 	}
-	sort(zs.begin(), zs.end());
+	sort(xs.begin(), xs.end());
 
-	for (int i = 0; i < zs.size() - 1; i++) {
-		diff = zs.at(i + 1) - zs.at(i);
+	for (int i = 0; i < xs.size() - 1; i++) {
+		diff = xs.at(i + 1) - xs.at(i);
 		if (diff > max2) {
 			if (diff > max1) {
+				max2 = max1;
 				max1 = diff;
 				lowerBoundMax1 = i;
 			}

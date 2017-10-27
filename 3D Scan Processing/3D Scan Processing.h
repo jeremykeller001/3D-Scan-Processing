@@ -55,6 +55,32 @@ private:
 #ifndef Layer_Generator_h
 #define Later_Generator_h
 
+#define RESOLUTION 500
+
+typedef struct                       /**** BMP file header structure ****/
+{
+	unsigned short bfType;           /* Magic number for file */
+	unsigned int   bfSize;           /* Size of file */
+	unsigned short bfReserved1;      /* Reserved */
+	unsigned short bfReserved2;      /* ... */
+	unsigned int   bfOffBits;        /* Offset to bitmap data */
+} BITMAPFILEHEADER;
+
+typedef struct                       /**** BMP file info structure ****/
+{
+	unsigned int   biSize;           /* Size of info header */
+	int            biWidth;          /* Width of image */
+	int            biHeight;         /* Height of image */
+	unsigned short biPlanes;         /* Number of color planes */
+	unsigned short biBitCount;       /* Number of bits per pixel */
+	unsigned int   biCompression;    /* Type of compression to use */
+	unsigned int   biSizeImage;      /* Size of image data */
+	int            biXPelsPerMeter;  /* X pixels per meter */
+	int            biYPelsPerMeter;  /* Y pixels per meter */
+	unsigned int   biClrUsed;        /* Number of colors used */
+	unsigned int   biClrImportant;   /* Number of important colors */
+} BITMAPINFOHEADER;
+
 class LayerGenerator{
 public:
 	static void readObj(string name, vector<double> *in1, vector<double> *in2, vector<double> *in3);
@@ -63,6 +89,9 @@ public:
 	static void mergeSort(vector<double> *x, vector<double> *y, vector<double> *z, int l, int r);
 	static void merge(vector<double> *x, vector<double> *y, vector<double> *z, int l, int m, int r);
 	static vector<Layer> generateLayers(vector<double> *x, vector<double> *y, vector<double> *z, int numLayers);
+	static void generateImage(vector<double> *z, vector<double> *y);
+	static int SaveBitmap(vector<int> *data);
+	static int convertToPixel(vector<double> coordinates);
 };
 
 #endif

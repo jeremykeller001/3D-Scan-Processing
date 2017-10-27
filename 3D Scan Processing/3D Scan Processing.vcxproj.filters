@@ -26,9 +26,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GNU_Plot.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="3D Scan Processing.h">
       <Filter>Header Files</Filter>
     </ClInclude>

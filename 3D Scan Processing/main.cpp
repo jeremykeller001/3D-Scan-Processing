@@ -2,6 +2,7 @@
 //#include "GNU_plot.h"
 
 int main(int argc, char* argv[]) {
+
 	// Read in point cloud
 	vector<double> in1;
 	vector<double> in2;
@@ -10,6 +11,8 @@ int main(int argc, char* argv[]) {
 
 	// Calculate which axes are which
 	LayerGenerator::calculateAxes(&in1, &in2, &in3);
+
+	LayerGenerator::generateImage(&in1, &in2);
 
 	// Plot 2D Coordinates (XY/XZ)
 	Gnuplot plot1;
@@ -28,6 +31,7 @@ int main(int argc, char* argv[]) {
 		cout << in1.at(i) << "  " << in2.at(i) << "  " << in3.at(i) << endl;
 	}
 	*/
+	
 	
 	vector<Layer> layers = LayerGenerator::generateLayers(&in1, &in2, &in3, 40);
 	system("pause");
