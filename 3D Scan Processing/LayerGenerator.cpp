@@ -6,49 +6,52 @@ void LayerGenerator::readObj(string name, vector<double> *in1, vector<double> *i
 	// Modify to accept arguments
 	objFile.open(name);
 
-	// Check to see if file opened
-	if (!objFile) {
-		cerr << "Unable to open file";
-		exit(1);
-	}
-
-	string input;
-
-	///*
-	cout << "Reading in point cloud..." << endl;
-
-	while (!objFile.eof()) {
-		objFile >> input;
-		if (input.compare("v") == 0) {
-			objFile >> input;
-			in1->push_back(atof(input.c_str()));
-			//cout << input << " x " << count << endl;
-			objFile >> input;
-			in2->push_back(atof(input.c_str()));
-			//cout << input << " y " << count << endl;
-			objFile >> input;
-			in3->push_back(atof(input.c_str()));
-			//cout << input << " z " << count << endl;
-		}
-	}
-	cout << "Point Cloud is in memory" << endl;
-	objFile.close();
+// Check to see if file opened
+if (!objFile) {
+	cerr << "Unable to open file";
+	exit(1);
 }
 
-double LayerGenerator::diff(vector<double> v) {
+string input;
+
+///*
+cout << "Reading in point cloud..." << endl;
+
+while (!objFile.eof()) {
+	objFile >> input;
+	if (input.compare("v") == 0) {
+		objFile >> input;
+		in1->push_back(atof(input.c_str()));
+		//cout << input << " x " << count << endl;
+		objFile >> input;
+		in2->push_back(atof(input.c_str()));
+		//cout << input << " y " << count << endl;
+		objFile >> input;
+		in3->push_back(atof(input.c_str()));
+		//cout << input << " z " << count << endl;
+	}
+}
+cout << "Point Cloud is in memory" << endl;
+objFile.close();
+}
+
+vector<double> LayerGenerator::diff(vector<double> v) {
 	double min = 1;
 	double max = -1;
+	vector<double> mm;
 	for (double d : v) {
 		if (d < min) min = d;
 		if (d > max) max = d;
 	}
-	return max - min;
+	mm.push_back(max - min);
+	mm.push_back(min);
+	return mm;
 }
 
 void LayerGenerator::calculateAxes(vector<double> *in1, vector<double> *in2, vector<double> *in3) {
-	double diff1 = diff(*in1);
-	double diff2 = diff(*in2);
-	double diff3 = diff(*in3);
+	double diff1 = diff(*in1).at(0);
+	double diff2 = diff(*in2).at(0);
+	double diff3 = diff(*in3).at(0);
 	cout << "Difference 1: " << diff1 << endl;
 	cout << "Difference 2: " << diff2 << endl;
 	cout << "Difference 3: " << diff3 << endl;
@@ -104,6 +107,14 @@ void LayerGenerator::calculateAxes(vector<double> *in1, vector<double> *in2, vec
 		}
 	}
 
+	// Normalize Y coordinates
+	vector<double> yDiff = diff(*in2);
+
+	for (int i = 0; i < in2->size(); i++) {
+		in2->at(i) -= yDiff.at(1);
+		in2->at(i) -= 1;
+	}
+
 	// Write coordinates to file
 	cout << "Writing coordinates to file" << endl;
 	ofstream output1;
@@ -118,9 +129,10 @@ void LayerGenerator::calculateAxes(vector<double> *in1, vector<double> *in2, vec
 	for (int i = 0; i < (in2->size()); i++) {
 		output2 << in3->at(i) << " " << in2->at(i) << endl;
 	}
-output2.close();
 
-cout << "Coordinates written, plotting..." << endl;
+	output2.close();
+
+	cout << "Coordinates written" << endl;
 }
 
 // adopted from http://www.geeksforgeeks.org/merge-sort/
@@ -218,6 +230,7 @@ vector<Layer> LayerGenerator::generateLayers(vector<double> *x, vector<double> *
 
 void LayerGenerator::generateImage(vector<double> *z, vector<double> *y) {
 	vector<int> data;
+	cout << "a" << endl;
 	for (int i = 0; i < (RESOLUTION * RESOLUTION); i++) {
 		data.push_back(0);
 	}
@@ -311,6 +324,6 @@ int LayerGenerator::convertToPixel(vector<double> coordinates) {
 	int mult = RESOLUTION / 2;
 	int z = coordinates.at(0) * mult + mult;
 	int y = coordinates.at(1) * mult + mult;
-	//cout << y * RESOLUTION + z << endl;
+	if ((y * RESOLUTION + z) > (RESOLUTION * RESOLUTION)) return 0;
 	return y * RESOLUTION + z;
 }

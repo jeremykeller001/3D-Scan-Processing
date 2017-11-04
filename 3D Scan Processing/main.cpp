@@ -7,12 +7,13 @@ int main(int argc, char* argv[]) {
 	vector<double> in1;
 	vector<double> in2;
 	vector<double> in3;
-	LayerGenerator::readObj("model.obj", &in1, &in2, &in3);
+	LayerGenerator::readObj("model_3.obj", &in1, &in2, &in3);
 
 	// Calculate which axes are which
 	LayerGenerator::calculateAxes(&in1, &in2, &in3);
 
 	LayerGenerator::generateImage(&in1, &in2);
+	system("pause");
 
 	// Plot 2D Coordinates (XY/XZ)
 	Gnuplot plot1;
